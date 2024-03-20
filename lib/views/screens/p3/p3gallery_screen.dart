@@ -4,6 +4,8 @@ import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class P3GalleryScreen extends StatefulWidget {
   const P3GalleryScreen({super.key});
@@ -13,22 +15,49 @@ class P3GalleryScreen extends StatefulWidget {
 }
 
 class _P3GalleryScreenState extends State<P3GalleryScreen> {
-  final List<File> _selectedMediaList = [];
+  List<String> _selectedMediaList = [];
+  String? userId;
+
+  @override
+  void initState() {
+    super.initState();
+    getFiles();
+  }
+
+  Future<void> getFiles() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userID = await prefs.getString('userId');
+    setState(() {
+      _selectedMediaList = prefs.getStringList(userID!) ?? [];
+    });
+  }
 
   Future<void> _pickFile(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
+    final ImagePicker picker = ImagePicker();
+    final XFile? result = await picker.pickImage(source: ImageSource.gallery);
     if (result != null) {
       setState(() {
-        _selectedMediaList.add(File(result.files.single.path!));
+        _selectedMediaList.add(result.path);
       });
+      await saveImagesToLocalStorage();
     }
   }
 
-  void _removeMedia(int index) {
+  Future<void> saveImagesToLocalStorage() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? userID = await prefs.getString('userId');
+    setState(() {
+      userId = userID!;
+    });
+    await prefs.setStringList(userID!, []);
+    await prefs.setStringList(userID, _selectedMediaList);
+  }
+
+  void _removeMedia(int index) async {
     setState(() {
       _selectedMediaList.removeAt(index);
     });
+    await saveImagesToLocalStorage();
   }
 
   @override
@@ -45,8 +74,8 @@ class _P3GalleryScreenState extends State<P3GalleryScreen> {
                 height: 30.h,
               ),
               SizedBox(
-                height: 660.h,
-                width: 380.w,
+                height: MediaQuery.of(context).size.height * 0.74,
+                width: MediaQuery.of(context).size.width * 0.95,
                 child: GridView.builder(
                   padding: const EdgeInsets.all(20),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -58,9 +87,15 @@ class _P3GalleryScreenState extends State<P3GalleryScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return Stack(
                       children: [
-                        Image.file(
-                          _selectedMediaList[index],
-                          fit: BoxFit.cover,
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          height: MediaQuery.of(context).size.width * 0.5,
+                          child: Image.file(
+                            width: MediaQuery.of(context).size.width * 0.4,
+                            height: MediaQuery.of(context).size.width * 0.5,
+                            File(_selectedMediaList[index]),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                         Positioned(
                           top: 8,
@@ -79,7 +114,7 @@ class _P3GalleryScreenState extends State<P3GalleryScreen> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(top: 20.h, left: 320.w),
+                padding: EdgeInsets.only(left: 320.w),
                 child: FloatingActionButton(
                   onPressed: () => _pickFile(context),
                   backgroundColor: kPrimaryMainColor,

@@ -17,6 +17,7 @@ class _CustomContainerState extends State<CustomContainer> {
     return Container(
       width: 320.w,
       height: 50.h,
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: ShapeDecoration(
         color: widget.containercolor,
         shape: RoundedRectangleBorder(
@@ -33,6 +34,7 @@ class _CustomContainerState extends State<CustomContainer> {
             fontWeight: FontWeight.w700,
             height: 0,
           ),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );

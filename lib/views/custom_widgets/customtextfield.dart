@@ -6,13 +6,12 @@ class CustomTextField extends StatefulWidget {
   final String label;
   final TextEditingController controller;
   final bool isPassword;
-  
+
   const CustomTextField({
     Key? key,
     required this.label,
     required this.controller,
     this.isPassword = false,
-    
   }) : super(key: key);
 
   @override
@@ -25,7 +24,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 347.w,
+      width: 380.w,
       height: 51.h,
       decoration: BoxDecoration(
         color: kBackgroundColor,
