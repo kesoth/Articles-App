@@ -1,3 +1,5 @@
+import 'package:articles_app/firebase/user_methods.dart';
+import 'package:articles_app/providers/user.dart';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/utils/app_images.dart';
 import 'package:articles_app/utils/app_strings.dart';
@@ -7,7 +9,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../models/user.dart';
 import '../../custom_widgets/my_snackbar.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -49,8 +54,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     Future<void> signIn() async {
-      print("INSIDE SIGN IN");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
       try {
         UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: _emailController.text,
@@ -60,7 +67,18 @@ class _LoginScreenState extends State<LoginScreen> {
           setState(() {
             signInSuccess = true;
           });
+          LocalUser? user =
+              await UserMethods().getUserByEmail(_emailController.text);
+          if (user != null) {
+            String id = user.id;
+            print("USER ID $id\n\n USER NAME: ${user.name}");
+            userProvider.setEmail(_emailController.text);
+            userProvider.setId(id);
+            userProvider.setName(user.name);
+            userProvider.setProfile(user.profile);
+          }
         }
+        SnackBarHelper.showSnackbar(context, "Sign In Success");
       } catch (e) {
         print("Sign in failed $e");
         SnackBarHelper.showSnackbar(context, "Sign In failed");

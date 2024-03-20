@@ -1,3 +1,4 @@
+import 'package:articles_app/firebase/user_methods.dart';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/utils/app_images.dart';
 import 'package:articles_app/utils/app_strings.dart';
@@ -67,7 +68,8 @@ class _SignupScreenState extends State<SignupScreen> {
         email: _emailController.text,
         password: _passwordController.text,
       );
-      //add to firestore here
+      UserMethods()
+          .addUserData(_emailController.text, _fullnameController.text);
       setState(() {
         success = true;
       });
