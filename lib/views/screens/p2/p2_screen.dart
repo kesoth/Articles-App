@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../cubit/articles/cubit.dart';
 import '../../../models/article.dart';
@@ -25,6 +26,8 @@ class P2Screen extends StatefulWidget {
 class _P2ScreenState extends State<P2Screen> {
   File? pdf;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  String? email;
+  bool loaded = false;
 
   Color getRandomContainerColor() {
     final List<Color> containerColors = [
@@ -38,11 +41,19 @@ class _P2ScreenState extends State<P2Screen> {
     return containerColors[randomIndex];
   }
 
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString('userEmail');
+      loaded = true;
+    });
+  }
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     getArticles();
+    getUserData();
   }
 
   @override
@@ -72,14 +83,24 @@ class _P2ScreenState extends State<P2Screen> {
                       List<Article> articles = state.articles;
                       return SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: articles.map((article) {
                             Color color = getRandomContainerColor();
                             return Container(
                               margin: const EdgeInsets.all(10),
-                              child: CustomContainer(
-                                text: article.title,
-                                containercolor: color,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          P2ArticleScreen(article: article),
+                                    ),
+                                  );
+                                },
+                                child: CustomContainer(
+                                  text: article.title,
+                                  containercolor: color,
+                                ),
                               ),
                             );
                           }).toList(),
@@ -110,19 +131,23 @@ class _P2ScreenState extends State<P2Screen> {
             ),
           ],
         ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(left: 300.w),
-          child: FloatingActionButton(
-            onPressed: () => _showOptionsBottomSheet(context),
-            backgroundColor: kPrimaryMainColor,
-            shape: const CircleBorder(),
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-        ),
+        floatingActionButton: loaded
+            ? email == "csa.fondateurs@gmail.com"
+                ? Padding(
+                    padding: EdgeInsets.only(left: 300.w),
+                    child: FloatingActionButton(
+                      onPressed: () => _showOptionsBottomSheet(context),
+                      backgroundColor: kPrimaryMainColor,
+                      shape: const CircleBorder(),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  )
+                : null
+            : const SizedBox(),
       ),
     );
   }

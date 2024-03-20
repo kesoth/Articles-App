@@ -46,31 +46,26 @@ class _MyPdfViewerState extends State<MyPdfViewer> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("My PDF Document"),
-      ),
-      body: _isLoading
-          ? Center(child: CircularProgressIndicator())
-          : PDFView(
-              filePath: widget.pdfPath,
-              autoSpacing: true,
-              enableSwipe: true,
-              pageSnap: true,
-              swipeHorizontal: true,
-              onError: (error) {
-                print(error);
-              },
-              onPageError: (page, error) {
-                print('$page: ${error.toString()}');
-              },
-              onViewCreated: (PDFViewController vc) {
-                pdfViewController = vc;
-              },
-              onPageChanged: (int? page, int? total) {
-                print('page change: $page/$total');
-              },
-            ),
-    );
+    return _isLoading
+        ? Center(child: CircularProgressIndicator())
+        : PDFView(
+            filePath: widget.pdfPath,
+            autoSpacing: true,
+            enableSwipe: true,
+            pageSnap: true,
+            swipeHorizontal: true,
+            onError: (error) {
+              print(error);
+            },
+            onPageError: (page, error) {
+              print('$page: ${error.toString()}');
+            },
+            onViewCreated: (PDFViewController vc) {
+              pdfViewController = vc;
+            },
+            onPageChanged: (int? page, int? total) {
+              print('page change: $page/$total');
+            },
+          );
   }
 }

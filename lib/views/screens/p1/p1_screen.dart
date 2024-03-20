@@ -7,6 +7,7 @@ import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:articles_app/views/custom_widgets/custom_container.dart';
+import 'package:articles_app/views/screens/p1/p1article_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../custom_widgets/writeArticle.dart';
 
@@ -27,6 +29,8 @@ class P1Screen extends StatefulWidget {
 class _P1ScreenState extends State<P1Screen> {
   File? pdf;
   final FirebaseStorage _storage = FirebaseStorage.instance;
+  String? email;
+  bool loaded = false;
 
   Color getRandomContainerColor() {
     final List<Color> containerColors = [
@@ -40,10 +44,19 @@ class _P1ScreenState extends State<P1Screen> {
     return containerColors[randomIndex];
   }
 
+  Future<void> getUserData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      email = prefs.getString('userEmail');
+      loaded = true;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
     getArticles();
+    getUserData();
   }
 
   @override
@@ -76,11 +89,21 @@ class _P1ScreenState extends State<P1Screen> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: articles.map((article) {
                             Color color = getRandomContainerColor();
-                            return Container(
-                              margin: const EdgeInsets.all(10),
-                              child: CustomContainer(
-                                text: article.title,
-                                containercolor: color,
+                            return InkWell(
+                              onTap: () {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        P1ArticleScreen(article: article),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: const EdgeInsets.all(10),
+                                child: CustomContainer(
+                                  text: article.title,
+                                  containercolor: color,
+                                ),
                               ),
                             );
                           }).toList(),
@@ -111,19 +134,23 @@ class _P1ScreenState extends State<P1Screen> {
             ),
           ],
         ),
-        floatingActionButton: Padding(
-          padding: EdgeInsets.only(left: 300.w),
-          child: FloatingActionButton(
-            onPressed: () => _showOptionsBottomSheet(context),
-            backgroundColor: kPrimaryMainColor,
-            shape: const CircleBorder(),
-            child: const Icon(
-              Icons.add,
-              color: Colors.white,
-              size: 40,
-            ),
-          ),
-        ),
+        floatingActionButton: loaded
+            ? email == "csa.fondateurs@gmail.com"
+                ? Padding(
+                    padding: EdgeInsets.only(left: 300.w),
+                    child: FloatingActionButton(
+                      onPressed: () => _showOptionsBottomSheet(context),
+                      backgroundColor: kPrimaryMainColor,
+                      shape: const CircleBorder(),
+                      child: const Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 40,
+                      ),
+                    ),
+                  )
+                : null
+            : const SizedBox(),
       ),
     );
   }

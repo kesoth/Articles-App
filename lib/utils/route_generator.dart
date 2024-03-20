@@ -1,4 +1,5 @@
 import 'package:articles_app/custom_navbar.dart';
+import 'package:articles_app/models/article.dart';
 import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/utils/screen_bindings.dart';
 import 'package:articles_app/views/screens/authentication/login_screen.dart';
@@ -19,7 +20,7 @@ class RouteGenerator {
           binding: ScreenBindings()),
       GetPage(
         name: kSignUpRoute,
-        page: () =>  SignupScreen(),
+        page: () => SignupScreen(),
       ),
       GetPage(
         name: kHomeRoute,
@@ -27,11 +28,15 @@ class RouteGenerator {
       ),
       GetPage(
         name: kP1ArticlesRoute,
-        page: () => const P1ArticleScreen(),
+        page: () => P1ArticleScreen(
+          article: Article.defaultInstance(),
+        ),
       ),
       GetPage(
         name: kP2ArticlesRoute,
-        page: () => const P1ArticleScreen(),
+        page: () => P1ArticleScreen(
+          article: Article.getDefaultInstance(),
+        ),
       ),
       GetPage(
         name: kP3ArticlesRoute,

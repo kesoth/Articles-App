@@ -14,6 +14,13 @@ class Article {
     required this.title,
     required this.type,
   });
+  Article.defaultInstance()
+      : description = '',
+        file = '',
+        isPDF = false,
+        title = '',
+        type = '';
+  static Article getDefaultInstance() => Article.defaultInstance();
 
   Article copyWith({
     String? description,
