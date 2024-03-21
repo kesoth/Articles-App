@@ -1,9 +1,8 @@
-import 'dart:io';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class P3TitlesScreen extends StatefulWidget {
   const P3TitlesScreen({super.key});
@@ -13,24 +12,12 @@ class P3TitlesScreen extends StatefulWidget {
 }
 
 class _P3TitlesScreenState extends State<P3TitlesScreen> {
-  File? _selectedMedia;
   final List<TextEditingController> _textControllers = [];
 
   @override
   void initState() {
     super.initState();
-    // Add initial TextEditingController
-    _textControllers.add(TextEditingController());
-  }
-
-  Future<void> _pickFile(BuildContext context) async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-
-    if (result != null) {
-      setState(() {
-        _selectedMedia = File(result.files.single.path!);
-      });
-    }
+    _loadTextControllers();
   }
 
   @override
@@ -93,6 +80,7 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
                               if (index == _textControllers.length - 1) {
                                 setState(() {
                                   _textControllers.add(TextEditingController());
+                                  _saveTextControllers();
                                 });
                               }
                             },
@@ -106,7 +94,12 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
               Padding(
                 padding: EdgeInsets.only(left: 340.w),
                 child: FloatingActionButton(
-                  onPressed: () => _pickFile(context),
+                  onPressed: () {
+                    setState(() {
+                      _textControllers.add(TextEditingController());
+                      _saveTextControllers();
+                    });
+                  },
                   backgroundColor: kPrimaryMainColor,
                   shape: const CircleBorder(),
                   child: const Icon(
@@ -123,9 +116,43 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
     );
   }
 
+  Future<void> _loadTextControllers() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('userId');
+      List<String>? textValues = prefs.getStringList('$id-textValues');
+      if (textValues != null) {
+        List<TextEditingController> controllers = [];
+        for (var value in textValues) {
+          controllers.add(TextEditingController(text: value));
+        }
+        setState(() {
+          _textControllers.addAll(controllers);
+        });
+      }
+    } catch (e) {
+      print('Error loading text controllers: $e');
+    }
+  }
+
+  Future<void> _saveTextControllers() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? id = prefs.getString('userId');
+      if (id != null) {
+        List<String> textValues =
+            _textControllers.map((controller) => controller.text).toList();
+        await prefs.setStringList('$id-textValues', []);
+        await prefs.setStringList('$id-textValues', textValues);
+      }
+    } catch (e) {
+      print('Error saving text controllers: $e');
+    }
+  }
+
   @override
   void dispose() {
-    // Dispose all TextEditingController instances
+    _saveTextControllers();
     for (var controller in _textControllers) {
       controller.dispose();
     }
