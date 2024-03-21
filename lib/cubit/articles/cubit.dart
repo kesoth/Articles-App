@@ -32,6 +32,16 @@ class ArticleCubit extends Cubit<ArticleState> {
     }
   }
 
+  Future<void> getAllArticlesRegarlessType() async {
+    try {
+      emit(ArticleLoading());
+      List<Article> articles = await repository.getAllArticles();
+      emit(ArticleLoadSuccess(articles: articles));
+    } catch (e) {
+      emit(ArticleLoadFailure(message: e.toString()));
+    }
+  }
+
   Future<void> uploadArticle(Article article) async {
     try {
       await repository.uploadArticle(article);
