@@ -26,12 +26,6 @@ class _AccountScreenState extends State<AccountScreen> {
                 text: LocaleKeys.account.tr(),
                 showBackButton: false,
               ),
-              Padding(
-                  padding: EdgeInsets.only(left: 347.w, top: 47.h),
-                  child: const Icon(
-                    Icons.edit,
-                    color: kSecondaryTextColor,
-                  )),
               const Profile(),
             ],
           ),

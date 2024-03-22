@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:articles_app/firebase/firebaseStorage.dart';
+import 'package:articles_app/firebase/user_methods.dart';
 import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/providers/user.dart';
 import 'package:articles_app/utils/app_colors.dart';
@@ -9,6 +13,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
@@ -28,6 +33,10 @@ class _ProfileState extends State<Profile> {
   String? email;
   String? profile;
   bool loaded = false;
+  File? _imageFile;
+  String? imagePath;
+  final ImagePicker _imagePicker = ImagePicker();
+
   @override
   void initState() {
     super.initState();
@@ -44,14 +53,36 @@ class _ProfileState extends State<Profile> {
     });
   }
 
+  Future<void> _pickImage() async {
+    final XFile? pickedFile =
+        await _imagePicker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        imagePath = pickedFile.path;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return loaded
         ? Stack(children: [
+            InkWell(
+              onTap: () => editProfileSheet(context),
+              child: Padding(
+                padding: EdgeInsets.only(left: 347.w, top: 47.h),
+                child: const Icon(
+                  Icons.edit,
+                  color: kSecondaryTextColor,
+                ),
+              ),
+            ),
             SingleChildScrollView(
               child: Container(
                   height: 560.h,
                   width: 357.w,
+                  padding: EdgeInsets.only(top: 50.w),
                   color: Colors.transparent,
                   child: Stack(children: [
                     Positioned(
@@ -258,10 +289,12 @@ class _ProfileState extends State<Profile> {
                       left: 100.w,
                       child: profile == null || profile == ""
                           ? Image.asset(kProfileImage)
-                          : FirebaseNetworkImage(
-                              imagePath: profile!,
-                              width: 150.w,
-                              height: 150.w,
+                          : ClipOval(
+                              child: FirebaseNetworkImage(
+                                imagePath: profile!,
+                                width: 150.w,
+                                height: 150.w,
+                              ),
                             ),
                     ),
                   ])),
@@ -280,6 +313,95 @@ class _ProfileState extends State<Profile> {
     userProvider.clear();
     await FirebaseAuth.instance.signOut();
     Get.offAllNamed(kLoginRoute);
+  }
+
+  void editProfileSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: const EdgeInsets.all(20),
+          child: StatefulBuilder(
+              builder: (BuildContext context, StateSetter setState) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  GestureDetector(
+                    onTap: () async {
+                      await _pickImage();
+                      setState(() {});
+                    },
+                    child: Container(
+                        width: 150,
+                        height: 150,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.grey[200],
+                        ),
+                        child: _imageFile != null &&
+                                _imageFile!.path.isNotEmpty &&
+                                _imageFile!.path != ""
+                            ? Container(
+                                width: 150,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey[200],
+                                ),
+                                child: ClipOval(
+                                  child: Image.file(
+                                    width: 150,
+                                    height: 150,
+                                    File(imagePath!),
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              )
+                            : const Icon(Icons.add,
+                                size: 50, color: Colors.blue)),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () async {
+                      await updateProfile();
+                      Navigator.pop(context);
+                      setState(() {
+                        _imageFile = null;
+                        imagePath = null;
+                      });
+                    },
+                    child: const Text('Upload'),
+                  ),
+                ],
+              ),
+            );
+          }),
+        );
+      },
+    ).whenComplete(
+      () => setState(
+        () {
+          _imageFile = null;
+          imagePath = null;
+        },
+      ),
+    );
+  }
+
+  Future<void> updateProfile() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? id = prefs.getString('userId');
+    try {
+      String? image = await uploadImage(_imageFile!);
+      await UserMethods().updateProfile(id!, image);
+      await prefs.setString('userProfile', image);
+      await getUserData();
+      setState(() {});
+      SnackBarHelper.showSnackbar(context, local.tr(LocaleKeys.success));
+    } catch (e) {
+      SnackBarHelper.showSnackbar(context, local.tr(LocaleKeys.failure));
+    }
   }
 
   void _showChangePasswordBottomSheet(BuildContext context) {

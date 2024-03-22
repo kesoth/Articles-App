@@ -14,7 +14,7 @@ class FirebaseNetworkImage extends StatelessWidget {
     required this.imagePath,
     this.width = double.infinity,
     this.height = double.infinity,
-    this.fit = BoxFit.fill,
+    this.fit = BoxFit.cover,
     this.placeholder,
     this.errorBuilder,
   });

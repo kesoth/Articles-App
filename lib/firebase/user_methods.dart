@@ -45,4 +45,15 @@ class UserMethods {
       return null;
     }
   }
+
+  Future<void> updateProfile(String userId, String newProfile) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .update({'profile': newProfile});
+    } catch (e) {
+      throw Exception("Error updating profile: $e");
+    }
+  }
 }
