@@ -121,7 +121,7 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
   Future<void> _loadTextControllers() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString('userId');
+      String? id = prefs.getString('userName');
       List<String>? textValues = prefs.getStringList('$id-textValues');
       if (textValues != null) {
         List<TextEditingController> controllers = [];
@@ -140,7 +140,7 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
   Future<void> _saveTextControllers() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? id = prefs.getString('userId');
+      String? id = prefs.getString('userName');
       if (id != null) {
         List<String> textValues =
             _textControllers.map((controller) => controller.text).toList();
