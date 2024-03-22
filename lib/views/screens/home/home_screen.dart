@@ -1,3 +1,4 @@
+import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:articles_app/views/custom_widgets/listview_component.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../cubit/articles/cubit.dart';
-import '../../../models/article.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -32,8 +33,8 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomappBar(
-                text: 'Welcome',
+              CustomappBar(
+                text: local.tr(LocaleKeys.welcome),
                 showBackButton: false,
               ),
               BlocBuilder<ArticleCubit, ArticleState>(
@@ -55,7 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Padding(
                           padding: EdgeInsets.only(left: 20.w, top: 74.h),
                           child: ListViewComponent(
-                            text: 'New Articles from P1',
+                            text: local.tr(LocaleKeys.newArticleFromP1),
                             containerWidth: 300.w,
                             container1Width: 267.w,
                             maincontainercolor: kPrimaryMainColor,
@@ -65,7 +66,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Padding(
                           padding: EdgeInsets.only(left: 20.w, top: 25.h),
                           child: ListViewComponent(
-                            text: 'Summary P1',
+                            text: local.tr(LocaleKeys.summaryP1),
                             containerWidth: 387.w,
                             container1Width: 352.w,
                             maincontainercolor: kPrimaryMainColor,
@@ -75,7 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Padding(
                           padding: EdgeInsets.only(left: 20.w, top: 25.h),
                           child: ListViewComponent(
-                            text: 'Summary P2',
+                            text: local.tr(LocaleKeys.summaryP2),
                             containerWidth: 387.w,
                             container1Width: 352.w,
                             maincontainercolor: kContainer1Color,
@@ -87,8 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   } else if (state is ArticleLoading) {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is ArticleLoadFailure) {
-                    return const Center(
-                      child: Text('Failed to load articles'),
+                    return Center(
+                      child: Text(local.tr(LocaleKeys.loadFailed)),
                     );
                   } else {
                     return Container();

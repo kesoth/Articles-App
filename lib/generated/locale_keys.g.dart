@@ -1,0 +1,61 @@
+// DO NOT EDIT. This is code generated via package:easy_localization/generate.dart
+
+abstract class  LocaleKeys {
+  static const signIn = 'signIn';
+  static const signUp = 'signUp';
+  static const email = 'email';
+  static const password = 'password';
+  static const confirmPassword = 'confirmPassword';
+  static const noAccount = 'noAccount';
+  static const haveAccount = 'haveAccount';
+  static const fullName = 'fullName';
+  static const account = 'account';
+  static const chooseLanguage = 'chooseLanguage';
+  static const changePassword = 'changePassword';
+  static const logout = 'logout';
+  static const home = 'home';
+  static const newArticleFromP1 = 'newArticleFromP1';
+  static const summaryP1 = 'summaryP1';
+  static const summaryP2 = 'summaryP2';
+  static const articles = 'articles';
+  static const title = 'title';
+  static const photos = 'photos';
+  static const photoGallery = 'photoGallery';
+  static const fileToDo = 'fileToDo';
+  static const writeArticle = 'writeArticle';
+  static const description = 'description';
+  static const uploadArticlePDF = 'uploadArticlePDF';
+  static const signInSuccess = 'signInSuccess';
+  static const signInFail = 'signInFail';
+  static const signUpSuccess = 'signUpSuccess';
+  static const signUpFail = 'signUpFail';
+  static const enterValidFields = 'enterValidFields';
+  static const welcome = 'welcome';
+  static const loadFailed = 'loadFailed';
+  static const invalidFile = 'invalidFile';
+  static const pleaseSelectPDF = 'pleaseSelectPDF';
+  static const uploadArticle = 'uploadArticle';
+  static const uploadAlertContent = 'uploadAlertContent';
+  static const yes = 'yes';
+  static const no = 'no';
+  static const ok = 'ok';
+  static const swipeLeft = 'swipeLeft';
+  static const enterText = 'enterText';
+  static const noArticles = 'noArticles';
+  static const publish = 'publish';
+  static const success = 'success';
+  static const articlePublishSuccess = 'articlePublishSuccess';
+  static const failure = 'failure';
+  static const imageUploadFail = 'imageUploadFail';
+  static const enterOldPass = 'enterOldPass';
+  static const oldPassword = 'oldPassword';
+  static const enterNewPassword = 'enterNewPassword';
+  static const newPassword = 'newPassword';
+  static const confirmNewPassword = 'confirmNewPassword';
+  static const enterConfirmNewPassword = 'enterConfirmNewPassword';
+  static const incorrectOldPassword = 'incorrectOldPassword';
+  static const passwordMismatch = 'passwordMismatch';
+  static const wrongOldPassEntered = 'wrongOldPassEntered';
+  static const passwordUpdateSuccess = 'passwordUpdateSuccess';
+
+}

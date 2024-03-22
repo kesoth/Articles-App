@@ -3,6 +3,8 @@ import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class P3TitlesScreen extends StatefulWidget {
   const P3TitlesScreen({super.key});
@@ -29,7 +31,7 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomappBar(text: 'File to do'),
+              CustomappBar(text: local.tr(LocaleKeys.fileToDo)),
               SizedBox(height: 45.h),
               Container(
                 height: 660.h,
@@ -66,9 +68,9 @@ class _P3TitlesScreenState extends State<P3TitlesScreen> {
                         Expanded(
                           child: TextFormField(
                             controller: _textControllers[index],
-                            decoration: const InputDecoration(
-                              hintText: 'Enter text',
-                              focusedBorder: UnderlineInputBorder(
+                            decoration: InputDecoration(
+                              hintText: local.tr(LocaleKeys.enterText),
+                              focusedBorder: const UnderlineInputBorder(
                                 borderSide:
                                     BorderSide(color: kPrimaryMainColor),
                               ),

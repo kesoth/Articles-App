@@ -1,3 +1,4 @@
+import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/providers/user.dart';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/utils/app_images.dart';
@@ -6,7 +7,6 @@ import 'package:articles_app/views/custom_widgets/customtextfield.dart';
 import 'package:articles_app/views/custom_widgets/my_snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +14,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 import '../../custom_widgets/firebaseNetworkImage.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -126,7 +127,7 @@ class _ProfileState extends State<Profile> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Choose language',
+                                    local.tr(LocaleKeys.chooseLanguage),
                                     style: TextStyle(
                                       color: kSecondaryTextColor,
                                       fontSize: 12.sp,
@@ -141,15 +142,29 @@ class _ProfileState extends State<Profile> {
                                   ToggleSwitch(
                                     minWidth: 150.w,
                                     minHeight: 35.h,
-                                    initialLabelIndex: 0,
+                                    initialLabelIndex: context.locale ==
+                                            const Locale('fr', 'FR')
+                                        ? 0
+                                        : 1,
                                     totalSwitches: 2,
                                     activeBgColor: const [kPrimaryMainColor],
                                     activeFgColor: Colors.white,
                                     inactiveBgColor: kSecondaryTextColor,
                                     inactiveFgColor: kPrimaryMainColor,
                                     labels: const ['French', 'German'],
-                                    onToggle: (index) {
-                                      print('switched to: $index');
+                                    onToggle: (index) async {
+                                      if (index == 0) {
+                                        final newLocale =
+                                            context.supportedLocales[0];
+                                        await context.setLocale(newLocale);
+                                        Get.updateLocale(newLocale);
+                                      } else if (index == 1) {
+                                        final newLocale =
+                                            context.supportedLocales[1];
+                                        await context.setLocale(newLocale);
+                                        Get.updateLocale(newLocale);
+                                      }
+                                      setState(() {});
                                     },
                                   ),
                                   SizedBox(
@@ -192,7 +207,7 @@ class _ProfileState extends State<Profile> {
                                           width: 42.w,
                                         ),
                                         Text(
-                                          'Change password',
+                                          local.tr(LocaleKeys.chooseLanguage),
                                           style: TextStyle(
                                             color: kSecondaryTextColor,
                                             fontSize: 12.sp,
@@ -219,7 +234,7 @@ class _ProfileState extends State<Profile> {
                                           width: 42.w,
                                         ),
                                         Text(
-                                          'logout',
+                                          local.tr(LocaleKeys.logout),
                                           style: TextStyle(
                                             color: kSecondaryTextColor,
                                             fontSize: 12.sp,
@@ -260,8 +275,6 @@ class _ProfileState extends State<Profile> {
   }
 
   Future<void> _signOut() async {
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // prefs.clear();
     final UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     userProvider.clear();
@@ -289,9 +302,9 @@ class _ProfileState extends State<Profile> {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Enter old password:',
-                      style: TextStyle(
+                    Text(
+                      local.tr(LocaleKeys.enterOldPass),
+                      style: const TextStyle(
                         fontSize: 12.0,
                         color: kHintTextColor,
                       ),
@@ -299,12 +312,12 @@ class _ProfileState extends State<Profile> {
                     CustomTextField(
                       controller: oldPasswordController,
                       isPassword: true,
-                      label: 'Old password',
+                      label: local.tr(LocaleKeys.oldPassword),
                     ),
                     const SizedBox(height: 10.0),
-                    const Text(
-                      'Enter new password:',
-                      style: TextStyle(
+                    Text(
+                      local.tr(LocaleKeys.enterNewPassword),
+                      style: const TextStyle(
                         fontSize: 12.0,
                         color: kHintTextColor,
                       ),
@@ -312,12 +325,12 @@ class _ProfileState extends State<Profile> {
                     CustomTextField(
                       controller: newPasswordController,
                       isPassword: true,
-                      label: 'New password',
+                      label: local.tr(LocaleKeys.newPassword),
                     ),
                     const SizedBox(height: 10.0),
-                    const Text(
-                      'Confirm new password:',
-                      style: TextStyle(
+                    Text(
+                      local.tr(LocaleKeys.confirmNewPassword),
+                      style: const TextStyle(
                         fontSize: 12.0,
                         color: kHintTextColor,
                       ),
@@ -325,7 +338,7 @@ class _ProfileState extends State<Profile> {
                     CustomTextField(
                       controller: confirmPasswordController,
                       isPassword: true,
-                      label: 'Confirm new Password',
+                      label: local.tr(LocaleKeys.enterConfirmNewPassword),
                     ),
                     const SizedBox(height: 10.0),
                     ElevatedButton(
@@ -337,21 +350,21 @@ class _ProfileState extends State<Profile> {
                         bool isOldPasswordValid =
                             await _validateOldPassword(oldPassword);
                         if (!isOldPasswordValid) {
-                          SnackBarHelper.showSnackbar(
-                              context, "Incorrect old password");
+                          SnackBarHelper.showSnackbar(context,
+                              local.tr(LocaleKeys.incorrectOldPassword));
                           return;
                         }
 
                         if (newPassword != confirmPassword) {
                           Navigator.pop(context);
-                          SnackBarHelper.showSnackbar(context,
-                              'New password and confirm password do not match');
+                          SnackBarHelper.showSnackbar(
+                              context, local.tr(LocaleKeys.passwordMismatch));
                           return;
                         }
                         changePassword(newPassword);
                         Navigator.pop(context);
                       },
-                      child: const Text('Change Password'),
+                      child: Text(local.tr(LocaleKeys.changePassword)),
                     ),
                   ],
                 ),
@@ -373,7 +386,8 @@ class _ProfileState extends State<Profile> {
       return true;
     } catch (e) {
       Navigator.pop(context);
-      SnackBarHelper.showSnackbar(context, "Wrong old password entered");
+      SnackBarHelper.showSnackbar(
+          context, local.tr(LocaleKeys.wrongOldPassEntered));
       return false;
     }
   }
@@ -383,7 +397,8 @@ class _ProfileState extends State<Profile> {
       User? user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
-        SnackBarHelper.showSnackbar(context, "Password Updated successfully");
+        SnackBarHelper.showSnackbar(
+            context, local.tr(LocaleKeys.passwordUpdateSuccess));
       } else {
         print('User not signed in');
       }

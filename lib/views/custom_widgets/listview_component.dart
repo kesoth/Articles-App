@@ -6,6 +6,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../screens/p1/p1article_screen.dart';
 import '../screens/p2/p2article_screen.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class ListViewComponent extends StatefulWidget {
   final String text;
@@ -82,10 +84,10 @@ class _ListViewComponentState extends State<ListViewComponent> {
                 ),
               ),
               child: widget.articles.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
-                        "No Articles",
-                        style: TextStyle(
+                        local.tr(LocaleKeys.noArticles),
+                        style: const TextStyle(
                           color: kHintTextColor,
                         ),
                       ),

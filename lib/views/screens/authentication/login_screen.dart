@@ -1,16 +1,19 @@
+import 'package:articles_app/custom_navbar.dart';
 import 'package:articles_app/firebase/user_methods.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/providers/user.dart';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/utils/app_images.dart';
 import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/views/custom_widgets/custom_button.dart';
 import 'package:articles_app/views/custom_widgets/customtextfield.dart';
+import 'package:articles_app/views/screens/authentication/signup_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 import '../../../models/user.dart';
 import '../../custom_widgets/my_snackbar.dart';
@@ -71,125 +74,141 @@ class _LoginScreenState extends State<LoginScreen> {
               await UserMethods().getUserByEmail(_emailController.text);
           if (user != null) {
             String id = user.id;
-            print("USER ID $id\n\n USER NAME: ${user.name}");
             userProvider.setEmail(_emailController.text);
             userProvider.setId(id);
             userProvider.setName(user.name);
             userProvider.setProfile(user.profile);
           }
         }
-        SnackBarHelper.showSnackbar(context, "Sign In Success");
+        SnackBarHelper.showSnackbar(context, LocaleKeys.signInSuccess.tr());
       } catch (e) {
         print("Sign in failed $e");
-        SnackBarHelper.showSnackbar(context, "Sign In failed");
+        SnackBarHelper.showSnackbar(context, LocaleKeys.signInFail.tr());
       }
     }
 
     return Scaffold(
-        backgroundColor: kBackgroundColor,
-        body: SingleChildScrollView(
-            child: Column(children: [
-          Container(
-            width: 430.w,
-            height: 323.h,
-            decoration: const ShapeDecoration(
-              gradient: LinearGradient(
-                begin: Alignment(0.00, -1.00),
-                end: Alignment(0, 1),
-                colors: [kGradientColor1, kGradientColor2],
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+      backgroundColor: kBackgroundColor,
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Container(
+              width: 430.w,
+              height: 323.h,
+              decoration: const ShapeDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment(0.00, -1.00),
+                  end: Alignment(0, 1),
+                  colors: [kGradientColor1, kGradientColor2],
                 ),
-              ),
-            ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: 62.h,
-                ),
-                Image.asset(kAppLogo),
-                SizedBox(
-                  height: 34.h,
-                ),
-                Text(
-                  'Sign In',
-                  style: TextStyle(
-                    color: kPrimaryTextColor,
-                    fontSize: 24.sp,
-                    fontFamily: 'Inter',
-                    fontWeight: FontWeight.w600,
-                    height: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(40),
+                    bottomRight: Radius.circular(40),
                   ),
-                )
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 91.h,
-          ),
-          CustomTextField(
-            label: 'Email...',
-            controller: _emailController,
-          ),
-          SizedBox(
-            height: 26.h,
-          ),
-          CustomTextField(
-            label: 'Password...',
-            controller: _passwordController,
-            isPassword: true,
-          ),
-          SizedBox(
-            height: 160.h,
-          ),
-          InkWell(
-              onTap: () async {
-                if (_validateFields()) {
-                  await signIn();
-                  if (signInSuccess) {
-                    Get.offAndToNamed(kNavBar);
-                  }
-                } else {
-                  SnackBarHelper.showSnackbar(context, "Sign In Failed");
-                }
-              },
-              child: const CustomButton(text: 'SIGN IN')),
-          SizedBox(
-            height: 19.h,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                'Do not have an account? ',
-                style: TextStyle(
-                  color: kHintTextColor,
-                  fontSize: 12.sp,
-                  fontFamily: 'Inter',
-                  fontWeight: FontWeight.w500,
-                  height: 0,
                 ),
               ),
-              InkWell(
-                onTap: () {
-                  Get.offAndToNamed(kSignUpRoute);
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 62.h,
+                  ),
+                  Image.asset(kAppLogo),
+                  SizedBox(
+                    height: 34.h,
+                  ),
+                  Text(
+                    LocaleKeys.signIn.tr(),
+                    style: TextStyle(
+                      color: kPrimaryTextColor,
+                      fontSize: 24.sp,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w600,
+                      height: 0,
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: 91.h,
+            ),
+            CustomTextField(
+              label: LocaleKeys.email.tr(),
+              controller: _emailController,
+            ),
+            SizedBox(
+              height: 26.h,
+            ),
+            CustomTextField(
+              label: LocaleKeys.password.tr(),
+              controller: _passwordController,
+              isPassword: true,
+            ),
+            SizedBox(
+              height: 160.h,
+            ),
+            InkWell(
+                onTap: () async {
+                  if (_validateFields()) {
+                    await signIn();
+                    if (signInSuccess) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const CustomNavBar(),
+                        ),
+                      );
+                    }
+                  } else {
+                    SnackBarHelper.showSnackbar(
+                        context, LocaleKeys.signInFail.tr());
+                  }
                 },
-                child: Text(
-                  'Sign up',
+                child: CustomButton(
+                  text: LocaleKeys.signIn.tr().toUpperCase(),
+                )),
+            SizedBox(
+              height: 19.h,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  LocaleKeys.haveAccount.tr(),
                   style: TextStyle(
-                    color: kPrimaryMainColor,
+                    color: kHintTextColor,
                     fontSize: 12.sp,
                     fontFamily: 'Inter',
                     fontWeight: FontWeight.w500,
                     height: 0,
                   ),
                 ),
-              ),
-            ],
-          ),
-        ])));
+                InkWell(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SignupScreen(),
+                      ),
+                    );
+                  },
+                  child: Text(
+                    LocaleKeys.signUp.tr(),
+                    style: TextStyle(
+                      color: kPrimaryMainColor,
+                      fontSize: 12.sp,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w500,
+                      height: 0,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

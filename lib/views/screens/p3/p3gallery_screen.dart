@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:articles_app/utils/app_colors.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class P3GalleryScreen extends StatefulWidget {
   const P3GalleryScreen({super.key});
@@ -69,7 +70,7 @@ class _P3GalleryScreenState extends State<P3GalleryScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const CustomappBar(text: 'File to do'),
+              CustomappBar(text: local.tr(LocaleKeys.fileToDo)),
               SizedBox(
                 height: 30.h,
               ),

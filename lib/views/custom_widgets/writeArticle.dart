@@ -1,20 +1,19 @@
 import 'dart:io';
 
+import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/utils/app_colors.dart';
-import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:articles_app/views/custom_widgets/custom_button.dart';
 import 'package:articles_app/views/custom_widgets/customtextfield.dart';
-import 'package:articles_app/views/screens/p1/p1_screen.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
 import '../../cubit/articles/cubit.dart';
 import '../../models/article.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class WriteArticleScreen extends StatefulWidget {
   final String type;
@@ -48,7 +47,7 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CustomappBar(text: 'Write Article'),
+            CustomappBar(text: local.tr(LocaleKeys.writeArticle)),
             SizedBox(
               height: 20.w,
             ),
@@ -88,9 +87,9 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
                         SizedBox(
                           height: 20.w,
                         ),
-                        const Text(
-                          "Title of your article",
-                          style: TextStyle(
+                        Text(
+                          local.tr(LocaleKeys.title),
+                          style: const TextStyle(
                             color: kTextFieldColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -100,13 +99,14 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
                           height: 5.w,
                         ),
                         CustomTextField(
-                            label: "Title", controller: titleController),
+                            label: local.tr(LocaleKeys.title),
+                            controller: titleController),
                         SizedBox(
                           height: 20.w,
                         ),
-                        const Text(
-                          "Write in your article",
-                          style: TextStyle(
+                        Text(
+                          local.tr(LocaleKeys.writeArticle),
+                          style: const TextStyle(
                             color: kTextFieldColor,
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -150,7 +150,7 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(4.r),
                               ),
-                              hintText: "Description",
+                              hintText: local.tr(LocaleKeys.description),
                               hintStyle: TextStyle(
                                 color: kHintTextColor,
                                 fontSize: 14.sp,
@@ -170,7 +170,8 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
                               await _publish();
                             }
                           },
-                          child: const CustomButton(text: "Publish"),
+                          child:
+                              CustomButton(text: local.tr(LocaleKeys.publish)),
                         ),
                         SizedBox(
                           height: 20.w,
@@ -210,15 +211,15 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Success"),
-            content: const Text("Article published successfully."),
+            title: Text(local.tr(LocaleKeys.success)),
+            content: Text(local.tr(LocaleKeys.articlePublishSuccess)),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   Navigator.pop(context);
                 },
-                child: const Text("OK"),
+                child: Text(local.tr(LocaleKeys.ok)),
               ),
             ],
           );
@@ -230,14 +231,14 @@ class _WriteArticleScreenState extends State<WriteArticleScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text("Failure"),
-            content: const Text("Failed to upload image. Please try again."),
+            title: Text(local.tr(LocaleKeys.ok)),
+            content: Text(local.tr(LocaleKeys.imageUploadFail)),
             actions: [
               TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
-                child: const Text("OK"),
+                child: Text(local.tr(LocaleKeys.ok)),
               ),
             ],
           );

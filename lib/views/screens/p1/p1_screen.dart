@@ -2,20 +2,19 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:articles_app/cubit/articles/cubit.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
 import 'package:articles_app/models/article.dart';
 import 'package:articles_app/utils/app_colors.dart';
-import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/views/custom_widgets/custom_appbar.dart';
 import 'package:articles_app/views/custom_widgets/custom_container.dart';
 import 'package:articles_app/views/screens/p1/p1article_screen.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 import '../../custom_widgets/writeArticle.dart';
 
@@ -112,15 +111,15 @@ class _P1ScreenState extends State<P1Screen> {
                     } else if (state is ArticleLoadFailure) {
                       return Center(
                         child: AlertDialog(
-                          title: const Text('Error'),
-                          content:
-                              Text('Failed to load articles: ${state.message}'),
+                          title: Text(local.tr(LocaleKeys.failure)),
+                          content: Text(
+                              '${local.tr(LocaleKeys.loadFailed)} ${state.message}'),
                           actions: [
                             TextButton(
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
-                              child: const Text('OK'),
+                              child: Text(local.tr(LocaleKeys.ok)),
                             ),
                           ],
                         ),
@@ -164,7 +163,7 @@ class _P1ScreenState extends State<P1Screen> {
           children: [
             ListTile(
               leading: const Icon(Icons.create),
-              title: const Text("Write Article"),
+              title: Text(local.tr(LocaleKeys.writeArticle)),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -178,7 +177,7 @@ class _P1ScreenState extends State<P1Screen> {
             ),
             ListTile(
               leading: const Icon(Icons.file_upload),
-              title: const Text("Upload PDF File"),
+              title: Text(local.tr(LocaleKeys.uploadArticlePDF)),
               onTap: () {
                 Navigator.pop(context);
                 _pickFile(context);
@@ -208,14 +207,14 @@ class _P1ScreenState extends State<P1Screen> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text("Invalid File"),
-              content: const Text("Please select a PDF file."),
+              title: Text(local.tr(LocaleKeys.invalidFile)),
+              content: Text(local.tr(LocaleKeys.pleaseSelectPDF)),
               actions: [
                 TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: const Text("OK"),
+                  child: Text(local.tr(LocaleKeys.ok)),
                 ),
               ],
             );
@@ -231,21 +230,21 @@ class _P1ScreenState extends State<P1Screen> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text("Upload Article"),
-          content: Text("Are you sure you want to upload $fileName"),
+          title: Text(local.tr(LocaleKeys.uploadArticle)),
+          content: Text("${local.tr(LocaleKeys.uploadAlertContent)} $fileName"),
           actions: [
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
                 uploadPdf(pdf);
               },
-              child: const Text("YES"),
+              child: Text(local.tr(LocaleKeys.yes)),
             ),
             TextButton(
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text("NO"),
+              child: Text(local.tr(LocaleKeys.no)),
             ),
           ],
         );
@@ -257,7 +256,6 @@ class _P1ScreenState extends State<P1Screen> {
     try {
       String fileName = pdf.path.split('/').last;
       String articleTitle = fileName.replaceAll('.pdf', '');
-      print("\nPDF\n\n$pdf");
       Reference ref = _storage.ref().child('articles/$fileName');
       UploadTask uploadTask = ref.putFile(pdf);
       await uploadTask.whenComplete(() => null);
@@ -279,7 +277,6 @@ class _P1ScreenState extends State<P1Screen> {
   Future<void> uploadArticleToFirestore(Article article) async {
     ArticleCubit cubit = BlocProvider.of<ArticleCubit>(context);
     try {
-      print("\n\n\n UPLOAD ARTICLE START");
       await cubit.uploadArticle(article);
     } catch (e) {
       print("Error uploading article$e");
