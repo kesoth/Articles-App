@@ -78,6 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
             userProvider.setId(id);
             userProvider.setName(user.name);
             userProvider.setProfile(user.profile);
+            userProvider.setLoggedIn(true);
           }
         }
         SnackBarHelper.showSnackbar(context, LocaleKeys.signInSuccess.tr());

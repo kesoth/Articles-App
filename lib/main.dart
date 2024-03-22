@@ -1,4 +1,5 @@
 import 'package:articles_app/cubit/articles/cubit.dart';
+import 'package:articles_app/providers/user.dart';
 import 'package:articles_app/utils/app_strings.dart';
 import 'package:articles_app/utils/route_generator.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -9,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:provider/provider.dart';
 import 'firebase_options.dart';
-import 'providers/user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,10 +44,12 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return ScreenUtilInit(
       designSize: const Size(430, 932),
       minTextAdapt: true,
@@ -56,18 +58,20 @@ class MyApp extends StatelessWidget {
         return GetMaterialApp(
           debugShowCheckedModeBanner: false,
           title: kAppName,
-          initialRoute: kLoginRoute,
+          initialRoute: userProvider.isLoggedIn ? kNavBar : kLoginRoute,
           localizationsDelegates: context.localizationDelegates,
           supportedLocales: context.supportedLocales,
           locale: context.locale,
           getPages: RouteGenerator.getPages(),
           builder: (context, child) {
             return MediaQuery(
-                data: MediaQuery.of(context).copyWith(
-                    textScaler: TextScaler.linear(MediaQuery.of(context)
-                        .textScaleFactor
-                        .clamp(1.0, 1.0))),
-                child: child!);
+              data: MediaQuery.of(context).copyWith(
+                textScaler: TextScaler.linear(
+                  MediaQuery.of(context).textScaleFactor.clamp(1.0, 1.0),
+                ),
+              ),
+              child: child!,
+            );
           },
         );
       },

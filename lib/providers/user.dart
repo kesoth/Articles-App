@@ -6,22 +6,26 @@ class UserProvider extends ChangeNotifier {
   String _email;
   String _name;
   String _profile;
+  bool _isLoggedIn;
 
   final String _idKey = 'userId';
   final String _emailKey = 'userEmail';
   final String _nameKey = 'userName';
   final String _profileKey = 'userProfile';
+  final String _isLoggedInKey = 'isLoggedIn';
 
   String get id => _id;
   String get email => _email;
   String get name => _name;
   String get profile => _profile;
+  bool get isLoggedIn => _isLoggedIn;
 
   UserProvider()
       : _id = '',
         _email = '',
         _name = '',
-        _profile = '' {
+        _profile = '',
+        _isLoggedIn = false {
     _loadUserData();
   }
 
@@ -49,11 +53,18 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setLoggedIn(bool isLoggedIn) {
+    _isLoggedIn = isLoggedIn;
+    _saveUserData();
+    notifyListeners();
+  }
+
   void clear() {
     _id = '';
     _email = '';
     _name = '';
     _profile = '';
+    _isLoggedIn = false;
     _clearUserData();
     notifyListeners();
   }
@@ -64,6 +75,7 @@ class UserProvider extends ChangeNotifier {
     _email = prefs.getString(_emailKey) ?? '';
     _name = prefs.getString(_nameKey) ?? '';
     _profile = prefs.getString(_profileKey) ?? '';
+    _isLoggedIn = prefs.getBool(_isLoggedInKey) ?? false;
   }
 
   Future<void> _saveUserData() async {
@@ -72,6 +84,7 @@ class UserProvider extends ChangeNotifier {
     await prefs.setString(_emailKey, _email);
     await prefs.setString(_nameKey, _name);
     await prefs.setString(_profileKey, _profile);
+    await prefs.setBool(_isLoggedInKey, _isLoggedIn);
   }
 
   Future<void> _clearUserData() async {
@@ -80,5 +93,6 @@ class UserProvider extends ChangeNotifier {
     await prefs.remove(_emailKey);
     await prefs.remove(_nameKey);
     await prefs.remove(_profileKey);
+    await prefs.remove(_isLoggedInKey);
   }
 }
