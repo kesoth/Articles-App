@@ -371,7 +371,7 @@ class _ProfileState extends State<Profile> {
                         imagePath = null;
                       });
                     },
-                    child: const Text('Upload'),
+                    child: Text(local.tr(LocaleKeys.update)),
                   ),
                 ],
               ),

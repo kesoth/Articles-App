@@ -54,5 +54,6 @@
     "incorrectOldPassword": "Ancien mot de passe incorrect",
     "passwordMismatch": "Le nouveau mot de passe et la confirmation du mot de passe ne correspondent pas",
     "wrongOldPassEntered": "Ancien mot de passe erroné saisi",
-    "passwordUpdateSuccess": "Mot de passe mis à jour avec succès"
+    "passwordUpdateSuccess": "Mot de passe mis à jour avec succès",
+    "update": "mise à jour"
 }

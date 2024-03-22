@@ -54,5 +54,6 @@
     "incorrectOldPassword": "Falsches altes Passwort",
     "passwordMismatch": "Neues Passwort und Bestätigungspasswort stimmen nicht überein",
     "wrongOldPassEntered": "Falsches altes Passwort eingegeben",
-    "passwordUpdateSuccess": "Passwort erfolgreich aktualisiert"
+    "passwordUpdateSuccess": "Passwort erfolgreich aktualisiert",
+    "update": "aktualisieren"
 }

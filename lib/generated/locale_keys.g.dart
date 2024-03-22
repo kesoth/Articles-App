@@ -57,5 +57,6 @@ abstract class  LocaleKeys {
   static const passwordMismatch = 'passwordMismatch';
   static const wrongOldPassEntered = 'wrongOldPassEntered';
   static const passwordUpdateSuccess = 'passwordUpdateSuccess';
+  static const update = 'update';
 
 }

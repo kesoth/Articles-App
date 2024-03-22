@@ -6,6 +6,9 @@ A new Flutter project.
 
 This project is a starting point for a Flutter application.
 
+- Localization keys file is generated using the command 
+flutter pub run easy_localization:generate -S assets/translations -f keys -o locale_keys.g.dart
+
 A few resources to get you started if this is your first Flutter project:
 
 - [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
