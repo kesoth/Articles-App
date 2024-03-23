@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:articles_app/generated/locale_keys.g.dart';
+import 'package:easy_localization/easy_localization.dart' as local;
 
 class MyTable extends StatefulWidget {
   final List<String> textFieldValues;
@@ -74,11 +76,11 @@ class _MyTableState extends State<MyTable> {
         child: Column(
           children: [
             DataTable(
-              columns: const [
-                DataColumn(label: Text('Name')),
-                DataColumn(label: Text('How Much')),
-                DataColumn(label: Text('Beginning')),
-                DataColumn(label: Text('End')),
+              columns: [
+                DataColumn(label: Text("${local.tr(LocaleKeys.name)}")),
+                DataColumn(label: Text("${local.tr(LocaleKeys.howMuch)}")),
+                DataColumn(label: Text("${local.tr(LocaleKeys.beginning)}")),
+                DataColumn(label: Text("${local.tr(LocaleKeys.end)}")),
               ],
               rows: _rows,
             ),
